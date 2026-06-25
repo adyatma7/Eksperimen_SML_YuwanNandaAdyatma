@@ -1,12 +1,11 @@
 """
-automate_NamaKamu.py
-Skrip otomatisasi preprocessing dataset Iris.
-Konversi dari notebook eksperimen ke format pipeline otomatis.
+automate_YuwanNandaAdyatma.py
+Skrip otomatisasi preprocessing Heart Disease Dataset.
+Jalankan: python automate_YuwanNandaAdyatma.py
 """
 
 import pandas as pd
 import numpy as np
-from sklearn.datasets import load_iris
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
 import os
@@ -15,25 +14,21 @@ import os
 # ─────────────────────────────────────────
 # 1. Load Data
 # ─────────────────────────────────────────
-def load_data():
-    """Memuat dataset Iris dan menyimpan versi raw ke CSV."""
+def load_data(filepath='heart.csv'):
     print("[1/4] Memuat dataset...")
-    iris = load_iris()
-    df = pd.DataFrame(iris.data, columns=iris.feature_names)
-    df['target'] = iris.target
-    df['species'] = df['target'].map({0: 'setosa', 1: 'versicolor', 2: 'virginica'})
+    df = pd.read_csv(filepath)
 
-    os.makedirs('iris_raw', exist_ok=True)
-    df.to_csv('iris_raw/iris.csv', index=False)
+    os.makedirs('heart_raw', exist_ok=True)
+    df.to_csv('heart_raw/heart.csv', index=False)
+
     print(f"    Dataset dimuat: {df.shape[0]} baris, {df.shape[1]} kolom")
     return df
 
 
 # ─────────────────────────────────────────
-# 2. Validasi Data (cek missing & duplikat)
+# 2. Validasi Data
 # ─────────────────────────────────────────
 def validate_data(df):
-    """Cek dan tangani missing values serta duplikat."""
     print("[2/4] Validasi data...")
 
     missing = df.isnull().sum().sum()
@@ -55,14 +50,12 @@ def validate_data(df):
 
 
 # ─────────────────────────────────────────
-# 3. Preprocessing (scaling + split)
+# 3. Preprocessing
 # ─────────────────────────────────────────
 def preprocess(df):
-    """Normalisasi fitur dan split train-test."""
     print("[3/4] Preprocessing...")
 
-    feature_cols = [c for c in df.columns if c not in ['target', 'species']]
-    X = df[feature_cols].values
+    X = df.drop('target', axis=1).values
     y = df['target'].values
 
     scaler = StandardScaler()
@@ -76,14 +69,14 @@ def preprocess(df):
     )
 
     print(f"    X_train: {X_train.shape} | X_test: {X_test.shape}")
+    print(f"    y_train distribusi: {np.bincount(y_train)}")
     return X_train, X_test, y_train, y_test
 
 
 # ─────────────────────────────────────────
 # 4. Simpan Hasil
 # ─────────────────────────────────────────
-def save_data(X_train, X_test, y_train, y_test, output_dir='iris_preprocessing'):
-    """Menyimpan data hasil preprocessing ke file .npy."""
+def save_data(X_train, X_test, y_train, y_test, output_dir='heart_preprocessing'):
     print("[4/4] Menyimpan hasil preprocessing...")
 
     os.makedirs(output_dir, exist_ok=True)
@@ -98,21 +91,21 @@ def save_data(X_train, X_test, y_train, y_test, output_dir='iris_preprocessing')
 
 
 # ─────────────────────────────────────────
-# Main Pipeline
+# Main
 # ─────────────────────────────────────────
 def main():
-    print("=" * 45)
-    print("  Automate Preprocessing — Iris Dataset")
-    print("=" * 45)
+    print("=" * 50)
+    print("  Automate Preprocessing — Heart Disease Dataset")
+    print("=" * 50)
 
     df = load_data()
     df = validate_data(df)
     X_train, X_test, y_train, y_test = preprocess(df)
     save_data(X_train, X_test, y_train, y_test)
 
-    print("=" * 45)
+    print("=" * 50)
     print("  Preprocessing selesai! Data siap dilatih.")
-    print("=" * 45)
+    print("=" * 50)
 
 
 if __name__ == '__main__':

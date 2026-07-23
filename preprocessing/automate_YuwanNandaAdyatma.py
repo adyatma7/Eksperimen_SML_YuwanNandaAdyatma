@@ -1,7 +1,7 @@
 """
 automate_YuwanNandaAdyatma.py
-Skrip otomatisasi preprocessing Heart Disease Dataset.
-Jalankan: python automate_YuwanNandaAdyatma.py
+Automated preprocessing script for Heart Disease Dataset.
+Run: python automate_YuwanNandaAdyatma.py
 """
 
 import pandas as pd
@@ -15,36 +15,36 @@ import os
 # 1. Load Data
 # ─────────────────────────────────────────
 def load_data(filepath='heart.csv'):
-    print("[1/4] Memuat dataset...")
+    print("[1/4] Loading dataset...")
     df = pd.read_csv(filepath)
 
     os.makedirs('heart_raw', exist_ok=True)
     df.to_csv('heart_raw/heart.csv', index=False)
 
-    print(f"    Dataset dimuat: {df.shape[0]} baris, {df.shape[1]} kolom")
+    print(f"    Dataset loaded: {df.shape[0]} rows, {df.shape[1]} columns")
     return df
 
 
 # ─────────────────────────────────────────
-# 2. Validasi Data
+# 2. Data Validation
 # ─────────────────────────────────────────
 def validate_data(df):
-    print("[2/4] Validasi data...")
+    print("[2/4] Validating data...")
 
     missing = df.isnull().sum().sum()
     duplicates = df.duplicated().sum()
 
     if missing > 0:
         df = df.dropna()
-        print(f"    Missing values ditemukan dan dihapus: {missing}")
+        print(f"    Missing values found and removed: {missing}")
     else:
         print(f"    Missing values: 0 ✓")
 
     if duplicates > 0:
         df = df.drop_duplicates()
-        print(f"    Duplikat ditemukan dan dihapus: {duplicates}")
+        print(f"    Duplicates found and removed: {duplicates}")
     else:
-        print(f"    Duplikat: 0 ✓")
+        print(f"    Duplicates: 0 ✓")
 
     return df
 
@@ -69,15 +69,15 @@ def preprocess(df):
     )
 
     print(f"    X_train: {X_train.shape} | X_test: {X_test.shape}")
-    print(f"    y_train distribusi: {np.bincount(y_train)}")
+    print(f"    y_train distribution: {np.bincount(y_train)}")
     return X_train, X_test, y_train, y_test
 
 
 # ─────────────────────────────────────────
-# 4. Simpan Hasil
+# 4. Save Results
 # ─────────────────────────────────────────
 def save_data(X_train, X_test, y_train, y_test, output_dir='heart_preprocessing'):
-    print("[4/4] Menyimpan hasil preprocessing...")
+    print("[4/4] Saving preprocessing results...")
 
     os.makedirs(output_dir, exist_ok=True)
     np.save(f'{output_dir}/X_train.npy', X_train)
@@ -85,7 +85,7 @@ def save_data(X_train, X_test, y_train, y_test, output_dir='heart_preprocessing'
     np.save(f'{output_dir}/y_train.npy', y_train)
     np.save(f'{output_dir}/y_test.npy',  y_test)
 
-    print(f"    File tersimpan di '{output_dir}/':")
+    print(f"    Files saved to '{output_dir}/':")
     for f in os.listdir(output_dir):
         print(f"      - {f}")
 
@@ -104,7 +104,7 @@ def main():
     save_data(X_train, X_test, y_train, y_test)
 
     print("=" * 50)
-    print("  Preprocessing selesai! Data siap dilatih.")
+    print("  Preprocessing complete! Data ready for training.")
     print("=" * 50)
 
 
